@@ -39,17 +39,6 @@ jobs:
         run: |
           ./gradlew clean build
         shell: bash
-      - name: Debug - Check if gradlew.bat exists
-        if: runner.os == 'Windows'
-        run: |
-          if (Test-Path "user-service\gradlew.bat") {
-            Write-Output "✅ gradlew.bat found"
-          } else {
-            Write-Output "❌ gradlew.bat NOT found"
-            Get-ChildItem -Recurse
-            exit 1
-          }
-        shell: pwsh
         
       - name: Build and test on Windows
         if: runner.os == 'Windows'
