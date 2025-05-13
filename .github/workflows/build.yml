@@ -46,4 +46,4 @@ jobs:
       - name: Build and test on Windows
         if: runner.os == 'Windows'
         working-directory: user-service
-        run: ./gradlew.bat clean build
+        run: gradlew.bat clean build
