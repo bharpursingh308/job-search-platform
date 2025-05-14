@@ -14,7 +14,7 @@ jobs:
 
     strategy:
       matrix:
-        service: [user-service]
+        service: [user-service, eureka-server]
 
     steps:
       - name: Checkout Code
