@@ -1,31 +1,29 @@
 # STEP 1: Build the application using Gradle
 FROM gradle:8.5-jdk17 AS builder
 
-WORKDIR /app
+#Working directory inside Docker container
+WORKDIR /user-service
 
-# Copy only build.gradle and settings.gradle first to leverage Docker layer caching
-COPY user-service/build.gradle.kts user-service/settings.gradle.kts ./user-service/
-
-# Copy Gradle wrapper files
-COPY user-service/build.gradle user-service/settings.gradle ./user-service/
+# Copy Gradle files (you're using Groovy DSL)
+COPY build.gradle settings.gradle ./
 
 # Pre-download dependencies
-WORKDIR /app/user-service
-RUN ./gradlew dependencies
+RUN gradle dependencies
 
 # Now copy the entire source code
-COPY user-service /app/user-service
+COPY . .
 
 # Build the Spring Boot fat jar
-RUN ./gradlew bootJar
+RUN gradle bootJar
 
 # STEP 2: Create the actual lightweight image
-FROM eclipse-temurin:17-jdk-alpine
+FROM openjdk:17-jdk-slim
 
-WORKDIR /app
+#Work Directory
+WORKDIR /user-service
 
 # Copy the built jar from the builder image
-COPY --from=builder /app/user-service/build/libs/*.jar app.jar
+COPY --from=builder /user-service/build/libs/*.jar app.jar
 
 # Expose port if needed (Spring default is 8080)
 EXPOSE 8080
