@@ -2,7 +2,7 @@
 FROM gradle:8.5-jdk17 AS builder
 
 #Working directory inside Docker container
-WORKDIR /user-service
+WORKDIR /eureka-service
 
 # Copy Gradle files (you're using Groovy DSL)
 COPY build.gradle settings.gradle ./
@@ -20,13 +20,13 @@ RUN gradle bootJar
 FROM openjdk:17-jdk-slim
 
 #Work Directory
-WORKDIR /user-service
+WORKDIR /eureka-service
 
 # Copy the built jar from the builder image
-COPY --from=builder /user-service/build/libs/*.jar app.jar
+COPY --from=builder /eureka-service/build/libs/*.jar app.jar
 
 # Expose port if needed (Spring default is 8080)
-EXPOSE 8080
+EXPOSE 8721
 
 # Run the app
 ENTRYPOINT ["java","-jar","app.jar"]
