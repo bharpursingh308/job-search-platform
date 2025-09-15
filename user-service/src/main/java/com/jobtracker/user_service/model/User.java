@@ -3,7 +3,11 @@ package com.jobtracker.user_service.model;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.proxy.HibernateProxy;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -30,7 +34,11 @@ public class User {
     @Column(nullable = false)
     private String password;
 
-    private String roles; // e.g. USER, ADMIN
+    private String role; // e.g. USER, ADMIN
+
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority("ROLE_" + role));
+    }
 
     @Override
     public final boolean equals(Object o) {
