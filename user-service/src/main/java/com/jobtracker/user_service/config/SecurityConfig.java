@@ -36,11 +36,11 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/public/**", "/actuator/**", "/api/**").permitAll()
+                        .requestMatchers("/public/**", "/actuator/**", "/auth/**").permitAll()
                         .anyRequest().authenticated())
 
                 //Register the Filter
-                //.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .httpBasic(Customizer.withDefaults()); // or .formLogin(), or custom method
         return http.build();
     }
