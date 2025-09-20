@@ -1,5 +1,6 @@
 package com.jobtracker.user_service.config;
 
+import com.jobtracker.user_service.security.CustomUserDetailsService;
 import com.netflix.discovery.converters.Auto;
 import jakarta.servlet.Filter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,8 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -26,10 +29,14 @@ import com.jobtracker.user_service.security.JwtAuthenticationFilter;
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final CustomUserDetailsService userDetailsService;
 
-    public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter){
+    public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter,
+            CustomUserDetailsService userDetailsService) {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+        this.userDetailsService = userDetailsService;
     }
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
@@ -39,28 +46,35 @@ public class SecurityConfig {
                         .requestMatchers("/public/**", "/actuator/**", "/auth/**").permitAll()
                         .anyRequest().authenticated())
 
-                //Register the Filter
+                // Register the Filter
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .httpBasic(Customizer.withDefaults()); // or .formLogin(), or custom method
         return http.build();
     }
 
-    @Bean
-    public UserDetailsService userDetailsService() {
-        UserDetails user = User.builder()
-                .username("admin")
-                .password("{noop}secret") // {noop} means plain text password
-                .roles("USER")
-                .build();
-        return new InMemoryUserDetailsManager(user);
-    }
+    // @Bean
+    // public UserDetailsService userDetailsService() {
+    // UserDetails user = User.builder()
+    // .username("admin")
+    // .password("{noop}secret") // {noop} means plain text password
+    // .roles("USER")
+    // .build();
+    // return new InMemoryUserDetailsManager(user);
+    // }
 
-    // AuthenticationProvider and AuthenticationManager added to validate username and password while loggin in
+    // AuthenticationProvider and AuthenticationManager added to validate username
+    // and password while loggin in
     @Bean
-    public AuthenticationProvider authenticationProvider(UserDetailsService userDetailsService) {
+    public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
         provider.setUserDetailsService(userDetailsService);
+        provider.setPasswordEncoder(passwordEncoder());
         return provider;
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 
     @Bean
