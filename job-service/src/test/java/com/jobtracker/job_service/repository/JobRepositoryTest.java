@@ -3,6 +3,7 @@ package com.jobtracker.job_service.repository;
 import com.jobtracker.job_service.model.ExperienceLevel;
 import com.jobtracker.job_service.model.Job;
 import com.jobtracker.job_service.model.JobType;
+import com.jobtracker.job_service.model.JobStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+
 @DataJpaTest
 public class JobRepositoryTest {
     @Autowired

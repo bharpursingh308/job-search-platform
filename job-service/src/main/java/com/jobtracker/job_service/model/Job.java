@@ -75,27 +75,3 @@ public class Job {
         updatedAt = LocalDateTime.now();
     }
 }
-
-enum JobType {
-    FULL_TIME,
-    PART_TIME,
-    CONTRACT,
-    FREELANCE,
-    INTERNSHIP
-}
-
-enum ExperienceLevel {
-    ENTRY_LEVEL,
-    JUNIOR,
-    MID_LEVEL,
-    SENIOR,
-    LEAD,
-    PRINCIPAL
-}
-
-enum JobStatus {
-    ACTIVE,
-    INACTIVE,
-    EXPIRED,
-    FILLED
-}
