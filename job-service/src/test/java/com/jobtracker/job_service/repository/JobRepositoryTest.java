@@ -177,11 +177,11 @@ public class JobRepositoryTest {
         entityManager.persistAndFlush(sampleJob2);
 
         // When
-        List<Job> californiaJobs = jobRepository.findByLocationContainingIgnoreCase("california");
+        List<Job> sanFranciscoJobs = jobRepository.findByLocationContainingIgnoreCase("San Francisco");
 
         // Then
-        assertEquals(1, californiaJobs.size());
-        assertEquals("San Francisco, CA", californiaJobs.get(0).getLocation());
+        assertEquals(1, sanFranciscoJobs.size());
+        assertEquals("San Francisco, CA", sanFranciscoJobs.get(0).getLocation());
     }
 
     @Test

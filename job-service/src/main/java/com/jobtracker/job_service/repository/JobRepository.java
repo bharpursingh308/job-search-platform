@@ -2,7 +2,6 @@ package com.jobtracker.job_service.repository;
 
 import com.jobtracker.job_service.model.Job;
 import com.jobtracker.job_service.model.JobStatus;
-//import com.jobtracker.job_service.model.JobStatus
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
