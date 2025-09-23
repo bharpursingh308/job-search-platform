@@ -3,8 +3,9 @@ package com.jobtracker.job_service.model;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import jakarta.validation.ValidatorFactory;
+import org.junit.jupiter.api.*;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -13,12 +14,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class JobTest {
 
+    @Autowired
     private Validator validator;
 
-    @BeforeEach
-    void setUp() {
-        validator = Validation.buildDefaultValidatorFactory().getValidator();
-    }
 
     @Test
     void shouldCreateJobWithValidData() {
@@ -76,7 +74,7 @@ class JobTest {
                 .location("San Francisco, CA")
                 .userId(1L)
                 .build();
-*
+
         // When
         Set<ConstraintViolation<Job>> violations = validator.validate(job);
 
