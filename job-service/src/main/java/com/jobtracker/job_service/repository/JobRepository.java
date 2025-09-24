@@ -20,13 +20,15 @@ public interface JobRepository extends JpaRepository<Job, Long> {
 
         Page<Job> findByStatus(JobStatus status, Pageable pageable);
 
-        List<Job> findByCompany(String company);
+        Page<Job> findByCompany(String company, Pageable pageable );
 
         List<Job> findByTitleContainingIgnoreCase(String title);
 
         List<Job> findByLocationContainingIgnoreCase(String location);
 
         List<Job> findBySalaryBetween(Double minSalary, Double maxSalary);
+
+        Page<Job> findByTitleContaining(String title, Pageable pageable);
 
         @Query("SELECT j FROM Job j WHERE " +
                         "(:title IS NULL OR LOWER(j.title) LIKE LOWER(CONCAT('%', :title, '%'))) AND " +
@@ -43,4 +45,6 @@ public interface JobRepository extends JpaRepository<Job, Long> {
                         @Param("maxSalary") Double maxSalary,
                         @Param("status") JobStatus status,
                         Pageable pageable);
+
+
 }

@@ -148,12 +148,15 @@ public class JobRepositoryTest {
         entityManager.persistAndFlush(sampleJob1);
         entityManager.persistAndFlush(sampleJob2);
 
+        Pageable pageable = PageRequest.of(0, 10);
+
         // When
-        List<Job> techCorpJobs = jobRepository.findByCompany("Tech Corp");
+        Page<Job> techCorpJobs = jobRepository.findByCompany("Tech Corp", pageable);
 
         // Then
-        assertEquals(1, techCorpJobs.size());
-        assertEquals("Tech Corp", techCorpJobs.get(0).getCompany());
+        assertEquals(1, techCorpJobs.getTotalElements());
+        assertEquals(1, techCorpJobs.getContent().size());
+        assertEquals("Tech Corp", techCorpJobs.getContent().get(0).getCompany());
     }
 
     @Test
