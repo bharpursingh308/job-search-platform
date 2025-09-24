@@ -1,8 +1,14 @@
 package com.jobtracker.job_service.dto;
 
 import lombok.Data;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class JobSearchRequest {
     private String title;
     private String company;

@@ -5,8 +5,8 @@ import com.jobtracker.job_service.mapper.JobMapper;
 import com.jobtracker.job_service.model.Job;
 import com.jobtracker.job_service.model.JobStatus;
 import com.jobtracker.job_service.repository.JobRepository;
-import com.jobtracker.job_service.exception.JobNotFoundException;
-import com.jobtracker.job_service.exception.UnauthorizedJobAccessException;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 import com.jobtracker.job_service.dto.JobSearchRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -41,7 +41,7 @@ public class JobService {
         log.info("Fetching job with id: {}", jobId);
 
         Job job = jobRepository.findById(jobId)
-                .orElseThrow(() -> new JobNotFoundException(jobId));
+                .orElseThrow(() -> new java.util.NoSuchElementException("Job not found with id: " + jobId));
 
         return jobMapper.toDto(job);
     }
@@ -50,11 +50,12 @@ public class JobService {
         log.info("Updating job with id: {} by user: {}", jobId, userId);
 
         Job existingJob = jobRepository.findById(jobId)
-                .orElseThrow(() -> new JobNotFoundException(jobId));
+                .orElseThrow(() -> new java.util.NoSuchElementException("Job not found with id: " + jobId));
 
         // Check if the user owns this job
         if (!existingJob.getUserId().equals(userId)) {
-            throw new UnauthorizedJobAccessException(jobId, userId);
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN,
+                    "User " + userId + " is not authorized to access job " + jobId);
         }
 
         // Update only non-null fields
@@ -74,11 +75,12 @@ public class JobService {
         log.info("Deleting job with id: {} by user: {}", jobId, userId);
 
         Job job = jobRepository.findById(jobId)
-                .orElseThrow(() -> new JobNotFoundException(jobId));
+                .orElseThrow(() -> new java.util.NoSuchElementException("Job not found with id: " + jobId));
 
         // Check if the user owns this job
         if (!job.getUserId().equals(userId)) {
-            throw new UnauthorizedJobAccessException(jobId, userId);
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN,
+                    "User " + userId + " is not authorized to access job " + jobId);
         }
 
         jobRepository.deleteById(jobId);
@@ -87,7 +89,7 @@ public class JobService {
 
     public void deleteJob(Long jobId) {
         Job job = jobRepository.findById(jobId)
-                .orElseThrow(() -> new JobNotFoundException(jobId));
+                .orElseThrow(() -> new java.util.NoSuchElementException("Job not found with id: " + jobId));
         deleteJob(jobId, job.getUserId());
     }
 
@@ -135,11 +137,12 @@ public class JobService {
         log.info("Changing status of job {} to {} by user {}", jobId, newStatus, userId);
 
         Job job = jobRepository.findById(jobId)
-                .orElseThrow(() -> new JobNotFoundException(jobId));
+                .orElseThrow(() -> new java.util.NoSuchElementException("Job not found with id: " + jobId));
 
         // Check if the user owns this job
         if (!job.getUserId().equals(userId)) {
-            throw new UnauthorizedJobAccessException(jobId, userId);
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN,
+                    "User " + userId + " is not authorized to access job " + jobId);
         }
 
         job.setStatus(newStatus);
