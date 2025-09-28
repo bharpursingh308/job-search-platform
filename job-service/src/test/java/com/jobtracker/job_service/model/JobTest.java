@@ -13,23 +13,23 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest
+
 class JobTest {
 
-    //private ValidatorFactory factory;
-    @Autowired
-    private Validator validator;
+    private static ValidatorFactory factory;
+    //@Autowired
+    private static Validator validator;
 
-    //@BeforeEach
-    //void setUp() {
-    //    factory = Validation.buildDefaultValidatorFactory();
-    //    validator = factory.getValidator();
-    //}
+    @BeforeAll
+     static void setUp() {
+        factory = Validation.buildDefaultValidatorFactory();
+        validator = factory.getValidator();
+    }
 
-    //@AfterEach
-    //void tearDown() {
-    //    factory.close();
-    //}
+    @AfterAll
+    static void tearDown() {
+        factory.close();
+    }
 
     @Test
     void validatorShouldBeInjected() {
