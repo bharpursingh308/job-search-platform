@@ -9,20 +9,20 @@ import com.jobtracker.job_service.dto.JobDto;
 import com.jobtracker.job_service.service.JobService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.http.HttpStatus;
-import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -34,14 +34,13 @@ import static org.mockito.Mockito.doThrow;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@SpringBootTest
 @WebMvcTest(JobController.class)
 public class JobControllerTest {
 
         @Autowired
         private MockMvc mockMvc;
 
-        @Mock
+        @MockitoBean
         private JobService jobService;
 
         @Autowired
@@ -139,7 +138,13 @@ public class JobControllerTest {
                 // Given
                 JobDto updateRequest = JobDto.builder()
                                 .title("Senior Software Engineer")
+                                .description("Develop amazing software")
+                                .company("Tech Corp")
+                                .location("San Francisco, CA")
                                 .salary(140000.0)
+                                .jobType(JobType.FULL_TIME)
+                                .experienceLevel(ExperienceLevel.SENIOR)
+                                .userId(1L)
                                 .build();
 
                 JobDto updatedJob = JobDto.builder()
@@ -147,7 +152,11 @@ public class JobControllerTest {
                                 .title("Senior Software Engineer")
                                 .description("Develop amazing software")
                                 .company("Tech Corp")
+                                .location("San Francisco, CA")
                                 .salary(140000.0)
+                                .jobType(JobType.FULL_TIME)
+                                .experienceLevel(ExperienceLevel.SENIOR)
+                                .userId(1L)
                                 .build();
 
                 when(jobService.updateJob(eq(1L), any(JobDto.class), eq(1L))).thenReturn(updatedJob);
@@ -167,6 +176,9 @@ public class JobControllerTest {
                 // Given
                 JobDto updateRequest = JobDto.builder()
                                 .title("Updated Title")
+                                .description("Updated description")
+                                .company("Updated Company")
+                                .userId(2L)
                                 .build();
 
                 when(jobService.updateJob(eq(1L), any(JobDto.class), eq(2L)))
@@ -240,9 +252,9 @@ public class JobControllerTest {
         @Test
         void shouldGetAllActiveJobsSuccessfully() throws Exception {
                 // Given
-                Pageable pageable = PageRequest.of(0, 10);
-                Page<JobDto> jobPage = new PageImpl<>(Collections.singletonList(sampleJobDto));
-                when(jobService.getAllActiveJobs(pageable)).thenReturn(jobPage);
+                Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "createdAt"));
+                Page<JobDto> jobPage = new PageImpl<>(Collections.singletonList(sampleJobDto), pageable, 1);
+                when(jobService.getAllActiveJobs(any(Pageable.class))).thenReturn(jobPage);
 
                 // When & Then
                 mockMvc.perform(get("/api/v1/jobs")
@@ -279,9 +291,12 @@ public class JobControllerTest {
                 // Given
                 JobDto updateRequest = JobDto.builder()
                                 .title("Updated Title")
+                                .description("Updated description")
+                                .company("Updated Company")
+                                .userId(1L)
                                 .build();
 
-                // When & Then
+                // When & Then - Missing User-Id header should cause 400 Bad Request
                 mockMvc.perform(put("/api/v1/jobs/{id}", 1L)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(updateRequest)))

@@ -6,6 +6,7 @@ import com.jobtracker.job_service.model.Job;
 import com.jobtracker.job_service.model.JobStatus;
 import com.jobtracker.job_service.repository.JobRepository;
 import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import com.jobtracker.job_service.dto.JobSearchRequest;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Slf4j
 @Transactional
+@Service
 public class JobService {
 
     private final JobRepository jobRepository;
