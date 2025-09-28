@@ -3,6 +3,7 @@ package com.jobtracker.job_service.repository;
 import com.jobtracker.job_service.model.ExperienceLevel;
 import com.jobtracker.job_service.model.Job;
 import com.jobtracker.job_service.model.JobType;
+import com.jobtracker.job_service.model.JobStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+
 @DataJpaTest
 public class JobRepositoryTest {
     @Autowired
@@ -146,12 +148,15 @@ public class JobRepositoryTest {
         entityManager.persistAndFlush(sampleJob1);
         entityManager.persistAndFlush(sampleJob2);
 
+        Pageable pageable = PageRequest.of(0, 10);
+
         // When
-        List<Job> techCorpJobs = jobRepository.findByCompany("Tech Corp");
+        Page<Job> techCorpJobs = jobRepository.findByCompany("Tech Corp", pageable);
 
         // Then
-        assertEquals(1, techCorpJobs.size());
-        assertEquals("Tech Corp", techCorpJobs.get(0).getCompany());
+        assertEquals(1, techCorpJobs.getTotalElements());
+        assertEquals(1, techCorpJobs.getContent().size());
+        assertEquals("Tech Corp", techCorpJobs.getContent().get(0).getCompany());
     }
 
     @Test
@@ -175,11 +180,11 @@ public class JobRepositoryTest {
         entityManager.persistAndFlush(sampleJob2);
 
         // When
-        List<Job> californiaJobs = jobRepository.findByLocationContainingIgnoreCase("california");
+        List<Job> sanFranciscoJobs = jobRepository.findByLocationContainingIgnoreCase("San Francisco");
 
         // Then
-        assertEquals(1, californiaJobs.size());
-        assertEquals("San Francisco, CA", californiaJobs.get(0).getLocation());
+        assertEquals(1, sanFranciscoJobs.size());
+        assertEquals("San Francisco, CA", sanFranciscoJobs.get(0).getLocation());
     }
 
     @Test

@@ -6,17 +6,35 @@ import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDateTime;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@SpringBootTest
 class JobTest {
 
+    //private ValidatorFactory factory;
     @Autowired
     private Validator validator;
 
+    //@BeforeEach
+    //void setUp() {
+    //    factory = Validation.buildDefaultValidatorFactory();
+    //    validator = factory.getValidator();
+    //}
+
+    //@AfterEach
+    //void tearDown() {
+    //    factory.close();
+    //}
+
+    @Test
+    void validatorShouldBeInjected() {
+        assertNotNull(validator, "Validator should not be null");
+    }
 
     @Test
     void shouldCreateJobWithValidData() {
